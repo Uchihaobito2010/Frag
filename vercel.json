@@ -1,24 +1,28 @@
 {
   "functions": {
     "api/check.py": {
-      "maxDuration": 15,
-      "memory": 1024
+      "memory": 1024,
+      "maxDuration": 10
     }
   },
   "routes": [
     {
       "src": "/api/check",
-      "dest": "/api/check.py",
-      "methods": ["GET", "POST", "OPTIONS"]
+      "dest": "/api/check.py"
     },
     {
       "src": "/",
-      "dest": "/api/check.py",
-      "methods": ["GET"]
-    },
-    {
-      "src": "/(.*)",
       "dest": "/api/check.py"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+      ]
     }
   ]
 }
