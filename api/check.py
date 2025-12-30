@@ -22,7 +22,14 @@ class handler(BaseHTTPRequestHandler):
             self.end_headers()
             
             response = {
-                "api": "Telegram Username Checker",
+                "api owner": "Paras Chourasiya",
+                "my contact telegram": "t.me/Aotpy",
+                "my info": "Aotpy.vercel.app",
+                "my channels": "Telegram channels - @obitoapi / @obitostuffs",
+                
+                "api about": "Telegram Username Checker",
+                "example of api": "https://tobi-fragment-api.vercel.app/api/check?username=aotpy",
+                
                 "version": "1.0",
                 "description": "Check Telegram username availability on Fragment",
                 "endpoints": {
@@ -32,6 +39,7 @@ class handler(BaseHTTPRequestHandler):
                     }
                 },
                 "example": {
+                    "example of api": "https://tobi-fragment-api.vercel.app/api/check?username=aotpy",
                     "request": {"username": "testuser"},
                     "response": {
                         "username": "@testuser",
@@ -108,6 +116,11 @@ class handler(BaseHTTPRequestHandler):
             
             # Default response
             result = {
+                "api owner": "Paras Chourasiya",
+                "my contact telegram": "t.me/Aotpy",
+                "my info": "Aotpy.vercel.app",
+                "my channels": "Telegram channels - @obitoapi / @obitostuffs",
+                
                 "username": f"@{username}",
                 "status": "unknown",
                 "price": "Unknown Ton",
@@ -180,11 +193,16 @@ class handler(BaseHTTPRequestHandler):
                 "price": "Unknown Ton",
                 "can_claim": False,
                 "message": "Request timeout",
+                "Contact admin if error": "t.me/Aotpy",
+                "example of api": "https://tobi-fragment-api.vercel.app/api/check?username=aotpy",
                 "source": "fragment"
+                
             }
         except Exception as e:
             return {
                 "username": f"@{username}",
+                "Contact admin if error": "t.me/Aotpy",
+                "example of api": "https://tobi-fragment-api.vercel.app/api/check?username=aotpy",
                 "status": "error",
                 "price": "Unknown Ton",
                 "can_claim": False,
