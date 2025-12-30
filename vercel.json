@@ -1,8 +1,7 @@
 {
   "functions": {
     "api/check.py": {
-      "maxDuration": 10,
-      "memory": 1024
+      "maxDuration": 15
     }
   },
   "rewrites": [
@@ -13,25 +12,6 @@
     {
       "source": "/",
       "destination": "/api/check.py"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET,POST,OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type"
-        }
-      ]
     }
   ]
 }
