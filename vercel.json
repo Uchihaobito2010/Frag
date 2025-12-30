@@ -1,17 +1,29 @@
 {
   "functions": {
-    "api/index.py": {
-      "maxDuration": 10
+    "api/check.py": {
+      "maxDuration": 15,
+      "memory": 1024
     }
   },
   "rewrites": [
     {
       "source": "/api/check",
-      "destination": "/api/index.py"
+      "destination": "/api/check.py"
     },
     {
       "source": "/",
-      "destination": "/api/index.py"
+      "destination": "/api/check.py"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
     }
   ]
 }
