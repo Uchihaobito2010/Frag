@@ -1,25 +1,24 @@
 {
   "functions": {
     "api/check.py": {
-      "maxDuration": 10
-    },
-    "api/index.py": {
-      "maxDuration": 5
+      "maxDuration": 15,
+      "memory": 1024
     }
   },
-  "headers": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
-      ]
+      "src": "/api/check",
+      "dest": "/api/check.py",
+      "methods": ["GET", "POST", "OPTIONS"]
+    },
+    {
+      "src": "/",
+      "dest": "/api/check.py",
+      "methods": ["GET"]
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/check.py"
     }
-  ],
-  "rewrites": [
-    { "source": "/api/check", "destination": "/api/check.py" },
-    { "source": "/api", "destination": "/api/index.py" }
   ]
 }
