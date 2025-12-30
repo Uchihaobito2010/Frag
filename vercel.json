@@ -1,17 +1,17 @@
 {
   "functions": {
-    "api/check.py": {
-      "maxDuration": 15
+    "api/index.py": {
+      "maxDuration": 10
     }
   },
   "rewrites": [
     {
       "source": "/api/check",
-      "destination": "/api/check.py"
+      "destination": "/api/index.py"
     },
     {
       "source": "/",
-      "destination": "/api/check.py"
+      "destination": "/api/index.py"
     }
   ]
 }
