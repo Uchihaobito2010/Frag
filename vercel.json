@@ -1,29 +1,14 @@
 {
-  "functions": {
-    "api/check.py": {
-      "maxDuration": 15,
-      "memory": 1024
-    }
-  },
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/check",
-      "destination": "/api/check.py"
-    },
-    {
-      "source": "/",
-      "destination": "/api/check.py"
+      "src": "api/index.py",
+      "use": "@vercel/python"
     }
   ],
-  "headers": [
+  "rewrites": [
     {
       "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
+      "destination": "/api/index.py"
     }
   ]
 }
