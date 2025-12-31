@@ -54,40 +54,83 @@ def check_fgusername(username: str, retries=3):
         return {"error": "API request failed"}
 
     html_data = response.get("html")
-    if not html_data and retries > 0:
-        time.sleep(2)
-        return check_fgusername(username, retries - 1)
-    elif not html_data:
-        return {"error": "No HTML returned from Fragment API"}
+    
+    # If no HTML returned, username is not in Fragment database at all
+    if not html_data:
+        return {
+            "username": username,
+            "status": "Unknown",  # We don't know if it's taken or free
+            "price": "N/A",
+            "on_fragment": "No",
+            "can_claim": "Unknown"  # We can't know without checking Telegram
+        }
 
     soup = BeautifulSoup(html_data, 'html.parser')
+    
+    # Check if there's a "No usernames found" message
+    no_results = soup.find("div", class_="table-cell-name")
+    if no_results and "No usernames found" in no_results.get_text():
+        return {
+            "username": username,
+            "status": "Not listed",  # Not on Fragment
+            "price": "N/A",
+            "on_fragment": "No",
+            "can_claim": "Unknown"
+        }
+    
     elements = soup.find_all("div", class_="tm-value")
     if len(elements) < 3:
-        return {"error": "Not enough info in response"}
+        # Not enough data to determine
+        return {
+            "username": username,
+            "status": "Unknown",
+            "price": "Unknown",
+            "on_fragment": "No",
+            "can_claim": "Unknown"
+        }
 
     tag = elements[0].get_text(strip=True)
     price = elements[1].get_text(strip=True)
-    status = elements[2].get_text(strip=True)
-
-    available = status.lower() == "unavailable"
+    raw_status = elements[2].get_text(strip=True)
     
-    # Determine status text
-    status_text = "Available" if not available else "Not available"
+    # Debug logging
+    print(f"DEBUG: Username: {tag}, Price: {price}, Raw Status: {raw_status}")
     
-    # Determine if on fragment
-    on_fragment = "Yes" if not available else "No"
+    # CORRECT LOGIC:
+    # Fragment shows "Available" when username is FOR SALE on Fragment
+    # Fragment shows "Unavailable" when username exists but NOT FOR SALE on Fragment
+    # If no results, username doesn't exist in Fragment database
     
-    # Can claim logic
-    can_claim = "Yes" if available else "No"
-
-    return {
-        "developer": DEVELOPER,
-        "username": tag,
-        "status": status_text,
-        "price": price,
-        "on_fragment": on_fragment,
-        "can_claim": can_claim
-    }
+    if raw_status.lower() == "available":
+        # Username is FOR SALE on Fragment
+        return {
+            "username": tag,
+            "status": "For Sale",  # Changed from "Available" to be clearer
+            "price": price if price else "Unknown",
+            "on_fragment": "Yes",
+            "can_claim": "Yes"  # Can buy it on Fragment
+        }
+    elif raw_status.lower() == "unavailable":
+        # Username exists but NOT FOR SALE on Fragment
+        # This could be:
+        # 1. Already taken on Telegram (not listed on Fragment)
+        # 2. Or some other status on Fragment
+        return {
+            "username": tag,
+            "status": "Not for Sale",  # Changed from "Not available"
+            "price": "N/A",
+            "on_fragment": "Yes",  # It's in Fragment DB but not for sale
+            "can_claim": "No"  # Cannot buy it on Fragment
+        }
+    else:
+        # Unknown status
+        return {
+            "username": tag,
+            "status": raw_status,
+            "price": price if price else "Unknown",
+            "on_fragment": "Yes",
+            "can_claim": "Unknown"
+        }
 
 @app.get("/")
 async def root():
@@ -97,7 +140,7 @@ async def root():
         "channel": CHANNEL,
         "portfolio": PORTFOLIO,
         "endpoint": "GET /tobi?username=your_username",
-        "example": "https://your-app.vercel.app/tobi?username=example"
+        "example": "https://tobi-api-fragm.vercel.app/tobi?username=example"
     }
 
 @app.get("/tobi")
@@ -121,5 +164,4 @@ async def not_found(request: Request, exc: Exception):
         content={"error": "Endpoint not found", "available_endpoints": ["/", "/tobi?username=xxx", "/api/health"]}
     )
 
-# This is required for Vercel to run the app
 app = app
